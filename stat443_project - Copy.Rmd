@@ -152,7 +152,7 @@ dataset_diff_diesel |>
   geom_line(alpha = 0.7) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   labs(title = "Gasoline Prices Relative to Diesel Over Time",
-       x = "Date", y = "Price − Diesel ($/gallon)", color = "Fuel Type") +
+       x = "Date", y = "Price - Diesel ($/gallon)", color = "Fuel Type") +
   theme_minimal()
 ```
 
@@ -171,7 +171,7 @@ dataset_focused |>
   geom_line(alpha = 0.7) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   labs(title = "Gasoline vs. Diesel Price Difference Over Time",
-       x = "Date", y = "All Grades All Forms − Diesel ($/gallon)") +
+       x = "Date", y = "All Grades All Forms - Diesel ($/gallon)") +
   theme_minimal()
 ```
 
