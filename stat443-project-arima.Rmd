@@ -31,44 +31,6 @@ df <- read_csv(file = "https://raw.githubusercontent.com/ShahrukhP15/Time-Series
 
 
 ```{r rmse_functions}
-# persistence
-persist_fc = function(train,holdout) {
-  mse <- 0
-  fc <- train[length(train)]
-  fcs <- c(fc)
-  yt <- holdout[1]
-  fcerror <- yt-fc
-  mse <- mse + fcerror^2
-  
-  for (i in 2:length(holdout)) {
-    yt <- holdout[i]
-    fc <- holdout[i-1]
-    fcs <- append(fcs, fc)
-    fcerror <- yt-fc
-    mse <- mse + fcerror^2
-  }
-  
-  rmse <- sqrt(mse / length(holdout))
-  
-  list(fc = fcs, rmse = rmse)
-}
-
-# average of training set
-iid_fc = function(train,holdout) {
-  mse <- 0
-  fc <- mean(train)
-  fcs <- rep(fc, length(holdout)) # same forecast length(holdout) times
-  
-  for (i in 1:length(holdout)) {
-    yt <- holdout[i]
-    fcerror <- yt-fc
-    mse <- mse + fcerror^2
-  }
-  
-  rmse <- sqrt(mse / length(holdout))
-  
-  list(fc = fcs, rmse = rmse)
-}
 
 # fixed parameters from training set for forecasting
 # adapted from arima-employee-wages.Rmd
@@ -184,7 +146,18 @@ seasonal_results <- lapply(seasonal_specs, function(spec) {
 }) %>% bind_rows() %>% arrange(Holdout_RMSE)
 
 print(seasonal_results)
-write.csv(seasonal_results, "seasonal_candidates.csv", row.names = FALSE)
+write.csv(seasonal_results, "seasonal_arima_candidates.csv", row.names = FALSE)
 ```
+```{r residual plots, warning=FALSE}
+# Fit best ARIMA model on training set only
+best_arima <- arima(train_y, order = c(4,1,3))
 
+# ACF of residuals to check if remaining autocorrelation is present
+# We want most lags to fall within the confidence bounds (white noise)
+ggAcf(best_arima$residuals, main = "ACF of Residuals - ARIMA(4,1,3)")
+
+# Ljung-Box test for residual autocorrelation
+# H0: residuals are uncorrelated (white noise)
+# p-value > 0.05 suggests residuals are consistent with white noise
+Box.test(best_arima$residuals, lag = 20, type = "Ljung-Box")
 ```

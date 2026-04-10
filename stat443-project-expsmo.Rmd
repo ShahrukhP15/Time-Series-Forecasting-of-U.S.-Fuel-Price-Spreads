@@ -1,6 +1,6 @@
 ---
 title: "stat443-project-expsmo"
-output: html_document
+output: pdf_document
 date: "2026-04-09"
 ---
 
@@ -16,7 +16,12 @@ library(ggplot2)
 
 
 ```{r prepare_data}
-df <- read_csv(file = "https://raw.githubusercontent.com/ShahrukhP15/Time-Series-Forecasting-of-U.S.-Fuel-Price-Spreads/refs/heads/main/PET_PRI_GND_DCUS_NUS_W.csv", show_col_types=F) 
+url <- paste0(
+  "https://raw.githubusercontent.com/ShahrukhP15/",
+  "Time-Series-Forecasting-of-U.S.-Fuel-Price-Spreads/",
+  "refs/heads/main/PET_PRI_GND_DCUS_NUS_W.csv"
+)
+df <- read_csv(file = url, show_col_types = FALSE)
 
 df <- df |>
   mutate(
@@ -45,11 +50,7 @@ holdout <- y[(ntrain+1):length(y)]
 ```
 
 ```{r holt}
-
-# ntrain <- 1257          # Using first 1000 weeks for training
-# train_diff <- df$spread[1:ntrain]
-# holdout_diff <- df$spread[(ntrain + 1):nrow(df)]
-
+# Use Holt's linear method
 holt_fit <- HoltWinters(train_y, gamma = FALSE)
 
 alpha <- holt_fit$alpha

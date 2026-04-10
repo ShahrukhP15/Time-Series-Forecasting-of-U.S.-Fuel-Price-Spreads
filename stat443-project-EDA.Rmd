@@ -20,7 +20,12 @@ set.seed(443)
 Next, appropriately rename labels and set date column correctly.
 
 ```{r rename_labels, warning=FALSE}
-dataset <- read.csv(file = "https://raw.githubusercontent.com/ShahrukhP15/Time-Series-Forecasting-of-U.S.-Fuel-Price-Spreads/refs/heads/main/PET_PRI_GND_DCUS_NUS_W.csv")
+url <- paste0(
+  "https://raw.githubusercontent.com/ShahrukhP15/",
+  "Time-Series-Forecasting-of-U.S.-Fuel-Price-Spreads/",
+  "refs/heads/main/PET_PRI_GND_DCUS_NUS_W.csv"
+)
+df <- read_csv(file = url, show_col_types = FALSE)
 new_col_names <- c( 
   all_grades_all_forms = "A1", all_grades_conv = "A2", all_grades_reform = "A3",
   regular_all_forms = "R1", regular_conv = "R2", regular_reform = "R3", 
@@ -28,7 +33,7 @@ new_col_names <- c(
   premium_all_forms = "P1", premium_conv = "P2", premium_reform = "P3",
   diesel = "D1")
 
-dataset <- dataset |>
+dataset <- df |>
   rename(new_col_names) |>
   mutate(Date = mdy(Date)) |> 
   arrange(Date) |> 
@@ -102,7 +107,7 @@ dataset_log |>
   theme_minimal()
 ```
 
-Lowkey, a lot of the graphs above can go into the appendix instead.
+Many of the exploratory plots above provide supporting evidence and may be moved to the appendix in the final report.
 
 In this paper, we want to find differences between diesel and gasoline. Let's plot some of these differences. First, modify the dataset to show the difference between diesel and all the other gasoline.
 
@@ -175,15 +180,19 @@ Below we have a summary statistics table
 ```{r summary_statistics}
 summary_statistics <- dataset_focused |>
   select(all_grades_all_forms, diesel, diff, log_ratio) |>
-  pivot_longer(everything(), names_to = "type", values_to = "value") |>
-  group_by(type) |>
+  rename(
+    "Gasoline ($/gal)" = all_grades_all_forms,
+    "Diesel ($/gal)" = diesel,
+    "Spread ($/gal)" = diff,
+    "Log Ratio" = log_ratio
+  ) |>
+  pivot_longer(everything(), names_to = "Variable", values_to = "value") |>
+  group_by(Variable) |>
   summarise(
-    mean      = mean(value),
-    abs_mean  = mean(abs(value)),
-    sd        = sd(value),
-    variance  = var(value),
-    min       = min(value),
-    max       = max(value)
+    Mean     = round(mean(value), 3),
+    SD       = round(sd(value), 3),
+    Min      = round(min(value), 3),
+    Max      = round(max(value), 3)
   )
 
 summary_statistics
@@ -193,8 +202,8 @@ Next, we have ACF plots with the difference and log ratio
 
 ```{r acf, warning=FALSE}
 gridExtra::grid.arrange(
-  ggAcf(dataset_focused$diff,      main = "ACF of Price Difference"),
-  ggAcf(dataset_focused$log_ratio, main = "ACF of Log Ratio"),
+  ggAcf(dataset_focused$diff,      main = "ACF of Spread"),
+  ggAcf(dataset_focused$log_ratio, main = "ACF of Log Ratio of Spread"),
   ncol = 2
 )
 ```
@@ -222,15 +231,23 @@ dataset_focused |>
   ) +
   theme_minimal()
 
-# ACF of differenced spread to confirm stationarity
-# Significant autocorrelation at early lags indicates short-term dependence
-ggAcf(na.omit(dataset_focused$diff_spread),
-      main = "ACF of Differenced Spread")
+# # ACF of differenced spread to confirm stationarity
+# # Significant autocorrelation at early lags indicates short-term dependence
+# ggAcf(na.omit(dataset_focused$diff_spread),
+#       main = "ACF of Differenced Spread")
+# 
+# # PACF of differenced spread to help identify AR components
+# # Used later for selecting ARIMA(p, d, q) model
+# ggPacf(na.omit(dataset_focused$diff_spread),
+#        main = "PACF of Differenced Spread")
 
-# PACF of differenced spread to help identify AR components
-# Used later for selecting ARIMA(p, d, q) model
-ggPacf(na.omit(dataset_focused$diff_spread),
-       main = "PACF of Differenced Spread")
+gridExtra::grid.arrange(
+  ggAcf(na.omit(dataset_focused$diff_spread), 
+        main = "ACF of Differenced Spread"),
+  ggPacf(na.omit(dataset_focused$diff_spread), 
+         main = "PACF of Differenced Spread"),
+  ncol = 2
+)
 ```
 
 
@@ -255,13 +272,21 @@ dataset_focused |>
   ) +
   theme_minimal()
 
-# ACF of differenced log ratio to confirm stationarity
-ggAcf(na.omit(dataset_focused$diff_log_ratio),
-      main = "ACF of Differenced Log Ratio")
+# # ACF of differenced log ratio to confirm stationarity
+# ggAcf(na.omit(dataset_focused$diff_log_ratio),
+#       main = "ACF of Differenced Log Ratio")
+# 
+# # PACF of differenced log ratio to help identify AR components
+# ggPacf(na.omit(dataset_focused$diff_log_ratio),
+#        main = "PACF of Differenced Log Ratio")
 
-# PACF of differenced log ratio to help identify AR components
-ggPacf(na.omit(dataset_focused$diff_log_ratio),
-       main = "PACF of Differenced Log Ratio")
+gridExtra::grid.arrange(
+  ggAcf(na.omit(dataset_focused$diff_log_ratio),
+      main = "ACF of Differenced Log Ratio"),
+  ggPacf(na.omit(dataset_focused$diff_log_ratio),
+       main = "PACF of Differenced Log Ratio"),
+  ncol = 2
+)
 
 ```
 The time plot of the differenced log ratio shows that the series fluctuates around zero with no clear trend and relatively stable variability, indicating that first differencing has removed the non-stationarity present in the original log ratio series. The ACF of the differenced log ratio exhibits a strong positive autocorrelation at lag 1 followed by a rapid decay, with most subsequent lags falling within the confidence bounds, suggesting short-term dependence. The PACF shows a dominant spike at lag 1, with most other lags within the confidence bounds, indicating that the series may be well described by a first-order autoregressive structure.

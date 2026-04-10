@@ -16,7 +16,12 @@ library(ggplot2)
 
 
 ```{r prepare_data}
-df <- read_csv(file = "https://raw.githubusercontent.com/ShahrukhP15/Time-Series-Forecasting-of-U.S.-Fuel-Price-Spreads/refs/heads/main/PET_PRI_GND_DCUS_NUS_W.csv", show_col_types=F) 
+url <- paste0(
+  "https://raw.githubusercontent.com/ShahrukhP15/",
+  "Time-Series-Forecasting-of-U.S.-Fuel-Price-Spreads/",
+  "refs/heads/main/PET_PRI_GND_DCUS_NUS_W.csv"
+)
+df <- read_csv(file = url, show_col_types = FALSE)
 
 df <- df |>
   mutate(
@@ -27,10 +32,7 @@ df <- df |>
   ) |>
   arrange(Date) |>
   select(Date, gasoline, diesel, spread)
-
 ```
-
-
 
 ```{r rmse_functions}
 # persistence
@@ -92,11 +94,11 @@ holdout <- y[(ntrain+1):length(y)]
 
 ```{r persistence_iid}
 # Test two baseline forecasting methods: persistence and iid
-# persistence
+# Persistence model
 persist <- persist_fc(train_y, holdout)
 cat("Persistence Holdout RMSE: ",persist$rmse |> round(4),"\n")
 
-# average of training set (iid)
+# # IID model: forecast using mean of training set
 iid <- iid_fc(train_y, holdout)
 cat("Average of training set Holdout RMSE: ",iid$rmse |> round(3),"\n")
 
