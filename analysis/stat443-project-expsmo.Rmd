@@ -16,12 +16,7 @@ library(ggplot2)
 
 
 ```{r prepare_data}
-url <- paste0(
-  "https://raw.githubusercontent.com/ShahrukhP15/",
-  "Time-Series-Forecasting-of-U.S.-Fuel-Price-Spreads/",
-  "refs/heads/main/PET_PRI_GND_DCUS_NUS_W.csv"
-)
-df <- read_csv(file = url, show_col_types = FALSE)
+df <- read_csv("../data/PET_PRI_GND_DCUS_NUS_W.csv", show_col_types = FALSE)
 
 df <- df |>
   mutate(

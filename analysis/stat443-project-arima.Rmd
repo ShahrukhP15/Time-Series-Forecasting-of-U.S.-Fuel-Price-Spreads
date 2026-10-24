@@ -16,7 +16,7 @@ library(ggplot2)
 
 
 ```{r prepare_data}
-df <- read_csv(file = "https://raw.githubusercontent.com/ShahrukhP15/Time-Series-Forecasting-of-U.S.-Fuel-Price-Spreads/refs/heads/main/PET_PRI_GND_DCUS_NUS_W.csv", show_col_types=F) |>
+df <- read_csv("../data/PET_PRI_GND_DCUS_NUS_W.csv", show_col_types = FALSE) |>
   mutate(
     Date = as.Date(Date, format = "%m/%d/%Y"),
     gasoline = A1,
@@ -101,7 +101,7 @@ arima_results <- lapply(arima_candidates, function(ord) {
 }) %>% bind_rows() %>% arrange(Holdout_RMSE)
 
 print(arima_results)
-write.csv(arima_results, "arima_candidates.csv", row.names = FALSE)
+write.csv(arima_results, "../results/arima_candidates.csv", row.names = FALSE)
 ```
 
 
@@ -146,7 +146,7 @@ seasonal_results <- lapply(seasonal_specs, function(spec) {
 }) %>% bind_rows() %>% arrange(Holdout_RMSE)
 
 print(seasonal_results)
-write.csv(seasonal_results, "seasonal_arima_candidates.csv", row.names = FALSE)
+write.csv(seasonal_results, "../results/seasonal_arima_candidates.csv", row.names = FALSE)
 ```
 ```{r residual plots, warning=FALSE}
 # Fit best ARIMA model on training set only

@@ -17,7 +17,7 @@ library(ggplot2)
 
 
 ```{r prepare_data}
-df <- read_csv(file = "https://raw.githubusercontent.com/ShahrukhP15/Time-Series-Forecasting-of-U.S.-Fuel-Price-Spreads/refs/heads/main/PET_PRI_GND_DCUS_NUS_W.csv", show_col_types=F) 
+df <- read_csv("../data/PET_PRI_GND_DCUS_NUS_W.csv", show_col_types = FALSE) 
 
 df <- df |>
   mutate(
@@ -30,8 +30,8 @@ df <- df |>
   select(Date, gasoline, diesel, spread)
 
 
-heatingoil <- read.csv("heatingoil.csv")
-crudeoil <- read.csv("oilprices.csv")
+heatingoil <- read.csv("../data/heatingoil.csv")
+crudeoil <- read.csv("../data/oilprices.csv")
 
 df_heat <- merge(x=df, y=heatingoil, by="Date", all.x=T)
 
@@ -211,7 +211,7 @@ armax_results <- lapply(names(xregs), function(name) {
 
 
 print(armax_results)
-write.csv(armax_results, "armax_candidates.csv", row.names = FALSE)
+write.csv(armax_results, "../results/armax_candidates.csv", row.names = FALSE)
 
 ```
 

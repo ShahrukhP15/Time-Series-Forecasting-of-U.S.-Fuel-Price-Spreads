@@ -20,12 +20,7 @@ set.seed(443)
 Next, appropriately rename labels and set date column correctly.
 
 ```{r rename_labels, warning=FALSE}
-url <- paste0(
-  "https://raw.githubusercontent.com/ShahrukhP15/",
-  "Time-Series-Forecasting-of-U.S.-Fuel-Price-Spreads/",
-  "refs/heads/main/PET_PRI_GND_DCUS_NUS_W.csv"
-)
-df <- read_csv(file = url, show_col_types = FALSE)
+df <- read_csv("../data/PET_PRI_GND_DCUS_NUS_W.csv", show_col_types = FALSE)
 new_col_names <- c( 
   all_grades_all_forms = "A1", all_grades_conv = "A2", all_grades_reform = "A3",
   regular_all_forms = "R1", regular_conv = "R2", regular_reform = "R3", 
