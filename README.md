@@ -67,10 +67,5 @@ Knitted PDFs of every file are in [`knitted_pdfs/`](knitted_pdfs).
     ├── results/                holdout RMSE for every ARIMA, seasonal ARIMA and ARIMAX candidate
     └── knitted_pdfs/           knitted PDF of each analysis file
 
-## Authors
-Shahrukh Islam Prithibi, Victor Liu, Ayush Vora, Elad Bromberg
-
-Built for STAT 443 (Time Series and Forecasting) at the University of British Columbia, 2026.
-
 ## License
 MIT. See [LICENSE](LICENSE).
