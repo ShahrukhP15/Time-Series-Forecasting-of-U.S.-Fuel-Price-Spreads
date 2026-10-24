@@ -47,7 +47,7 @@ Requires R with these packages:
 
     install.packages(c("forecast", "tidyverse", "zoo"))
 
-Clone the repository, set it as your working directory, and knit the R Markdown files in this order:
+Clone the repository and knit the R Markdown files in `analysis/` in this order:
 
 | File | What it does |
 |---|---|
@@ -57,17 +57,20 @@ Clone the repository, set it as your working directory, and knit the R Markdown 
 | `stat443-project-arima.Rmd` | ARIMA and seasonal ARIMA search |
 | `stat443-project-arimax.Rmd` | ARIMAX models with external regressors |
 
-Knitted PDFs of every file are in [`Project_Rmd_PDFs/`](Project_Rmd_PDFs).
+Knitted PDFs of every file are in [`knitted_pdfs/`](knitted_pdfs).
 
 ## Project structure
 
-    ├── Project_Report.pdf              final report
-    ├── Project_Rmd_PDFs/               knitted PDF of each analysis file
-    ├── stat443-project-*.Rmd           analysis code
-    ├── PET_PRI_GND_DCUS_NUS_W.csv      weekly gasoline and diesel prices (EIA)
-    ├── oilprices.csv                   daily WTI crude oil prices (FRED)
-    ├── heatingoil.csv                  daily heating oil prices (EIA)
-    └── *_candidates.csv                holdout RMSE for every ARIMA, seasonal ARIMA and ARIMAX candidate
+    ├── Project_Report.pdf      final report
+    ├── analysis/               R Markdown analysis files
+    ├── data/                   weekly fuel prices (EIA), WTI crude oil (FRED), heating oil (EIA)
+    ├── results/                holdout RMSE for every ARIMA, seasonal ARIMA and ARIMAX candidate
+    └── knitted_pdfs/           knitted PDF of each analysis file
+
+## Authors
+Shahrukh Islam Prithibi, Victor Liu, Ayush Vora, Elad Bromberg
+
+Built for STAT 443 (Time Series and Forecasting) at the University of British Columbia, 2026.
 
 ## License
 MIT. See [LICENSE](LICENSE).
